@@ -28,7 +28,7 @@
 
     <repositories>
         <repository>
-            <id>martin-vysny</id>
+            <id>mvysny-github</id>
             <url>https://dl.bintray.com/mvysny/github</url>
         </repository>
     </repositories>
