@@ -43,7 +43,7 @@ class ApplicationKotlinTest {
         _get<TextField> { caption = "First name" }._value = "Halk"
         _get<Button> { caption = "Save" }._click()
         val dataProvider = _get<Grid<Customer>> { }.dataProvider
-        expect(true, "Halk exists: ${dataProvider._findAll()}") {
+        expect(true, "Halk does not exist: ${dataProvider._findAll()}") {
             dataProvider._findAll().any { it.firstName == "Halk" }
         }
     }

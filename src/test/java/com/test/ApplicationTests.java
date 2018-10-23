@@ -50,6 +50,6 @@ public class ApplicationTests {
         _click(_get(Button.class, spec -> spec.withCaption("Save")));
         Grid<Customer> grid = _get(Grid.class);
         Stream<Customer> customerStream = grid.getDataProvider().fetch(new Query<>());
-        assertTrue(customerStream.map(Customer::getFirstName).anyMatch("Halk"::equals));
+        assertTrue("Halk does not exist", customerStream.map(Customer::getFirstName).anyMatch("Halk"::equals));
     }
 }
