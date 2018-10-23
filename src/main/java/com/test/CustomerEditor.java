@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @SpringComponent
 @UIScope
-public class CustomerEditor extends VerticalLayout /*implements KeyNotifier*/ {
+public class CustomerEditor extends VerticalLayout {
 
     private final CustomerRepository repository;
 
@@ -22,17 +22,16 @@ public class CustomerEditor extends VerticalLayout /*implements KeyNotifier*/ {
     private Customer customer;
 
     /* Fields to edit properties in Customer entity */
-    TextField firstName = new TextField("First name");
-    TextField lastName = new TextField("Last name");
+    private final TextField firstName = new TextField("First name");
+    private final TextField lastName = new TextField("Last name");
 
     /* Action buttons */
-    // TODO why more code?
-    Button save = new Button("Save", VaadinIcons.CHECK);
-    Button cancel = new Button("Cancel");
-    Button delete = new Button("Delete", VaadinIcons.TRASH);
-    HorizontalLayout actions = new HorizontalLayout(save, cancel, delete);
+    private final Button save = new Button("Save", VaadinIcons.CHECK);
+    private final Button cancel = new Button("Cancel");
+    private final Button delete = new Button("Delete", VaadinIcons.TRASH);
+    private final HorizontalLayout actions = new HorizontalLayout(save, cancel, delete);
 
-    Binder<Customer> binder = new Binder<>(Customer.class);
+    private final Binder<Customer> binder = new Binder<>(Customer.class);
     private ChangeHandler changeHandler;
 
     @Autowired
@@ -59,12 +58,12 @@ public class CustomerEditor extends VerticalLayout /*implements KeyNotifier*/ {
         setVisible(false);
     }
 
-    void delete() {
+    public void delete() {
         repository.delete(customer);
         changeHandler.onChange();
     }
 
-    void save() {
+    public void save() {
         repository.save(customer);
         changeHandler.onChange();
     }
@@ -103,5 +102,4 @@ public class CustomerEditor extends VerticalLayout /*implements KeyNotifier*/ {
         // is clicked
         changeHandler = h;
     }
-
 }

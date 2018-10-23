@@ -67,7 +67,7 @@ public class MainUI extends UI {
         listCustomers(null);
     }
 
-    void listCustomers(String filterText) {
+    public void listCustomers(String filterText) {
         if (StringUtils.isEmpty(filterText)) {
             grid.setItems(repo.findAll());
         } else {
@@ -83,5 +83,4 @@ public class MainUI extends UI {
         this.filter = new TextField();
         this.addNewBtn = new Button("New customer", VaadinIcons.PLUS);
     }
-
 }
