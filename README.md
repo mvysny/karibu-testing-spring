@@ -1,3 +1,6 @@
+[![Powered By Vaadin on Kotlin](http://vaadinonkotlin.eu/iconography/vok_badge.svg)](http://vaadinonkotlin.eu)
+[![Build Status](https://travis-ci.org/mvysny/karibu-testing-spring.svg?branch=master)](https://travis-ci.org/mvysny/karibu-testing-spring)
+
 # Karibu-Testing Demo project for Spring Boot
 
 An example project which demostrates the possibility to use the [Karibu-Testing](https://github.com/mvysny/karibu-testing)
