@@ -10,6 +10,7 @@ import com.vaadin.ui.TextField;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanFactory;
@@ -55,8 +56,8 @@ public class ApplicationTests {
     }
 
     @AfterClass
-    public static void processMemDump()
-    {
-        HeapDumpUtil.heapDump(ApplicationTests.class);
+    public static void heapDump() {
+        HeapDump.heapDump(ApplicationTests.class);
     }
+
 }
