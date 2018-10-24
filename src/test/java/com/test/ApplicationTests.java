@@ -8,6 +8,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.TextField;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,5 +52,11 @@ public class ApplicationTests {
         Grid<Customer> grid = _get(Grid.class);
         Stream<Customer> customerStream = grid.getDataProvider().fetch(new Query<>());
         assertTrue(customerStream.map(Customer::getFirstName).anyMatch("Halk"::equals));
+    }
+
+    @AfterClass
+    public static void processMemDump()
+    {
+        HeapDumpUtil.heapDump(ApplicationTests.class);
     }
 }
