@@ -3,7 +3,7 @@
 
 # Karibu-Testing Demo project for Spring Boot
 
-An example project which demostrates the possibility to use the [Karibu-Testing](https://github.com/mvysny/karibu-testing)
+An example project which demonstrates the possibility to use the [Karibu-Testing](https://github.com/mvysny/karibu-testing)
 Browserless Testing Framework with Spring Boot. No web server, no Selenium, and no TestBench, pure business logic testing.
 
 Either Java or Kotlin might be used, or both.
