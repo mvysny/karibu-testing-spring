@@ -20,6 +20,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.util.Comparator;
 import java.util.stream.Stream;
 
 import static com.github.karibu.testing.LocatorJ.*;
@@ -57,7 +58,11 @@ public class ApplicationTests {
 
     @AfterClass
     public static void heapDump() {
+
         HeapDump.heapDump(ApplicationTests.class);
+        HeapInfo heapInfo = new HeapInfo();
+        heapInfo.classStatistics(s -> s.contains("vaadin"));
+        heapInfo.printNicely(null, Comparator.comparingLong(HeapInfo.ClassHeapInfo::getInstBytes),System.out::println);
     }
 
 }

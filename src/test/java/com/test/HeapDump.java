@@ -14,7 +14,7 @@ import java.lang.management.ManagementFactory;
 
 public class HeapDump implements TestRule {
     public static final String HEAPDUMP_PATH = "heapdump.path";
-    private static final String HOTSPOT_BEAN_NAME =
+    private static final String HOTSPOT_DIAGNOSTICS_BEAN_NAME =
             "com.sun.management:type=HotSpotDiagnostic";
 
     public HeapDump() {
@@ -25,8 +25,8 @@ public class HeapDump implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                    base.evaluate();
-                    heapDump(description.getTestClass());
+                base.evaluate();
+                heapDump(description.getTestClass());
             }
         };
     }
@@ -37,7 +37,7 @@ public class HeapDump implements TestRule {
             {
                 try {
                     MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-                    return ManagementFactory.newPlatformMXBeanProxy(server, HOTSPOT_BEAN_NAME, HotSpotDiagnosticMXBean.class);
+                    return ManagementFactory.newPlatformMXBeanProxy(server, HOTSPOT_DIAGNOSTICS_BEAN_NAME, HotSpotDiagnosticMXBean.class);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
