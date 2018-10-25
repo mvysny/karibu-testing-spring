@@ -7,6 +7,7 @@ import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -24,12 +25,13 @@ public class MainUI extends UI {
     final TextField filter;
 
     private final Button addNewBtn;
+    private final Button memoryLeak;
 
     @Override
     protected void init(VaadinRequest request) {
 
         // build layout
-        HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
+        HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn, memoryLeak);
         VerticalLayout verticalLayout = new VerticalLayout(actions, grid, editor);
         verticalLayout.setSizeFull();
         setContent(verticalLayout);
@@ -50,9 +52,7 @@ public class MainUI extends UI {
         filter.addValueChangeListener(e -> listCustomers(e.getValue()));
 
         // Connect selected Customer to editor or hide if none is selected
-        grid.asSingleSelect().addValueChangeListener(e -> {
-            editor.editCustomer(e.getValue());
-        });
+        grid.asSingleSelect().addValueChangeListener(e -> editor.editCustomer(e.getValue()));
 
         // Instantiate and edit new Customer the new button is clicked
         addNewBtn.addClickListener(e -> editor.editCustomer(new Customer("", "")));
@@ -65,6 +65,14 @@ public class MainUI extends UI {
 
         // Initialize listing
         listCustomers(null);
+
+        // Add a component with a listener without adding it to the design
+        memoryLeak.addClickListener(e ->
+        {
+            Label label = new Label();
+            addNewBtn.addClickListener(btnClick -> label.setValue(label.getValue() + "Clicked again!"));
+        });
+
     }
 
     public void listCustomers(String filterText) {
@@ -82,5 +90,6 @@ public class MainUI extends UI {
         this.grid = new Grid<>(Customer.class);
         this.filter = new TextField();
         this.addNewBtn = new Button("New customer", VaadinIcons.PLUS);
+        this.memoryLeak = new Button("Memory Leak", VaadinIcons.BOMB);
     }
 }

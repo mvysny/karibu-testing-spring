@@ -32,7 +32,7 @@ public class HeapDump implements TestRule {
     }
 
 
-    private static Lazy<HotSpotDiagnosticMXBean> diagnosticMXBean =
+    private static final Lazy<HotSpotDiagnosticMXBean> diagnosticMXBean =
             new Lazy<>(() ->
             {
                 try {

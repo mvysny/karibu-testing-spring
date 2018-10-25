@@ -25,7 +25,6 @@ public class HeapInfo extends HashMap<String, HeapInfo.ClassHeapInfo> {
     private final static ObjectName diagCmdBeanName;
     private static final String DIAGNOSTICS_COMMAND_BEAN_NAME =
             "com.sun.management:type=DiagnosticCommand";
-    private static byte[] buffer;
 
 
     static {
@@ -133,7 +132,7 @@ public class HeapInfo extends HashMap<String, HeapInfo.ClassHeapInfo> {
             BufferedReader reader = new BufferedReader(new StringReader(data));
             String header = reader.readLine();
             if (!header.contains("ClassName")) {
-                throw new RuntimeException("Something went wong with JMX beans: " + data);
+                throw new RuntimeException("Something went wrong with JMX beans: " + data);
             }
             String[] headers = CSV_PATTERN.split(header);
             Predicate<String> myFilter = s -> !s.startsWith(HeapInfo.class.getName());
@@ -205,22 +204,6 @@ public class HeapInfo extends HashMap<String, HeapInfo.ClassHeapInfo> {
                 .filter(ClassHeapInfo::isNotEmpty)
                 .forEach(value -> result.put(value.getClassName(), value));
         return result;
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        HeapInfo heapInfo = new HeapInfo();
-        HeapInfo heapInfo2 = new HeapInfo();
-        System.gc();
-        Thread.sleep(200);
-        System.gc();
-        heapInfo.classStatistics(s -> true);
-        buffer = new byte[1000000];
-        System.gc();
-        Thread.sleep(200);
-        System.gc();
-        heapInfo2.classStatistics(s -> true);
-        heapInfo2.delta(heapInfo)
-                .printNicely(info -> info.getInstBytes() > 1000, null, System.out::println);
     }
 
     public static void tryGC() {
