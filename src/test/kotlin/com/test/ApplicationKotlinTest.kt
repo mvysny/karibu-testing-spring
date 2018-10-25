@@ -1,11 +1,14 @@
 package com.test
 
 import com.github.karibu.testing.*
+import com.test.utils.HeapDump
+import com.test.utils.SingletonBeanStoreRetrievalStrategy
 import com.vaadin.spring.internal.UIScopeImpl
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
 import com.vaadin.ui.TextField
 import org.junit.After
+import org.junit.AfterClass
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -45,6 +48,14 @@ class ApplicationKotlinTest {
         val dataProvider = _get<Grid<Customer>> { }.dataProvider
         expect(true, "Halk does not exist: ${dataProvider._findAll()}") {
             dataProvider._findAll().any { it.firstName == "Halk" }
+        }
+    }
+
+    companion object {
+        @AfterClass
+        @JvmStatic
+        fun heapDump() {
+            HeapDump.heapDump(ApplicationKotlinTest::class.java)
         }
     }
 }

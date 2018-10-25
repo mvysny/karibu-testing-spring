@@ -1,4 +1,4 @@
-package com.test;
+package com.test.utils;
 
 import com.vaadin.spring.internal.BeanStore;
 import com.vaadin.spring.internal.BeanStoreRetrievalStrategy;
