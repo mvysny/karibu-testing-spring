@@ -1,6 +1,8 @@
 package com.test
 
 import com.github.karibu.testing.*
+import com.test.utils.HeapDump
+import com.test.utils.SingletonBeanStoreRetrievalStrategy
 import com.vaadin.spring.internal.UIScopeImpl
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid

@@ -1,4 +1,4 @@
-package com.test;
+package com.test.utils;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
@@ -10,15 +10,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.management.ManagementFactory;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("WeakerAccess")
 public class HeapInfo extends HashMap<String, HeapInfo.ClassHeapInfo> {
@@ -57,7 +55,7 @@ public class HeapInfo extends HashMap<String, HeapInfo.ClassHeapInfo> {
 
         @Override
         public String toString() {
-            return "{" +
+            return className + ":{" +
                     "size:" + instSize +
                     ", count:" + instCount +
                     ", total bytes:" + instBytes +
@@ -172,19 +170,6 @@ public class HeapInfo extends HashMap<String, HeapInfo.ClassHeapInfo> {
         return this;
     }
 
-    public void printNicely(Predicate<ClassHeapInfo> filter, Comparator<ClassHeapInfo> sorter, Consumer<String> out) {
-        Stream<ClassHeapInfo> stream = values().stream();
-        if (filter != null) {
-            stream = stream.filter(filter);
-        }
-        if (sorter == null) {
-            sorter = Comparator.comparingLong(HeapInfo.ClassHeapInfo::getInstBytes).reversed();
-        }
-        stream = stream.sorted(sorter);
-        stream.map(info -> info.getClassName() + ":" + info)
-                .forEach(out);
-    }
-
     public HeapInfo delta(HeapInfo compare) {
         Map<String, ClassHeapInfo> copy = new TreeMap<>(this);
         HeapInfo result = new HeapInfo();
@@ -215,5 +200,16 @@ public class HeapInfo extends HashMap<String, HeapInfo.ClassHeapInfo> {
 
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return toString("; ");
+    }
+
+    public String toString(String delimiter) {
+        return "HeapInfo[" +
+                values().stream().map(ClassHeapInfo::toString).collect(Collectors.joining(delimiter)) +
+                "]";
     }
 }

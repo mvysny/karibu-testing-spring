@@ -1,4 +1,4 @@
-package com.test;
+package com.test.utils;
 
 import com.sun.management.HotSpotDiagnosticMXBean;
 import org.junit.rules.TestRule;

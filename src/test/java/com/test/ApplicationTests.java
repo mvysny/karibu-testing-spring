@@ -1,6 +1,10 @@
 package com.test;
 
 import com.github.karibu.testing.MockVaadin;
+import com.test.utils.HeapDump;
+import com.test.utils.HeapInfo;
+import com.test.utils.MemoryLeakFailure;
+import com.test.utils.SingletonBeanStoreRetrievalStrategy;
 import com.vaadin.data.provider.Query;
 import com.vaadin.spring.internal.UIScopeImpl;
 import com.vaadin.ui.Button;
@@ -8,11 +12,9 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.TextField;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +62,7 @@ public class ApplicationTests {
         assertTrue(customerStream.map(Customer::getFirstName).anyMatch("Halk"::equals));
     }
 
-    @Test(expected = AssertionError.class)
+    @Test(expected = MemoryLeakFailure.class)
     public void testMemoryLeak() {
         Button memoryLeak = _get(Button.class, spec -> spec.withCaption("Memory Leak"));
         _click(memoryLeak);
@@ -82,9 +84,8 @@ public class ApplicationTests {
         if (delta.values().stream()
                 .map(HeapInfo.ClassHeapInfo::getClassName)
                 .anyMatch(s -> s.startsWith("com.vaadin.ui."))) {
-            Logger logger = LoggerFactory.getLogger(this.getClass());
-            delta.printNicely(null, null, logger::error);
-            Assert.fail("Memory Leak Detected");
+            LoggerFactory.getLogger(this.getClass()).error(delta.toString());
+            throw new MemoryLeakFailure("Memory Leak Detected: " + delta.toString(System.lineSeparator()));
         }
     }
 
@@ -106,7 +107,8 @@ public class ApplicationTests {
         HeapInfo heapInfo2 = new HeapInfo().classStatistics(classesToWatch);
 
         System.out.println("****** Class usage differences START *****");
-        heapInfo2.delta(heapInfo1).printNicely(null, null, System.out::println);
+        HeapInfo delta = heapInfo2.delta(heapInfo1);
+        System.out.println(delta.toString(System.lineSeparator()));
         System.out.println("******* Class usage differences END ******");
 
         Grid<Customer> grid = _get(Grid.class);
