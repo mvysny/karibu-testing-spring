@@ -21,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Comparator;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static com.github.karibu.testing.LocatorJ.*;
@@ -56,13 +57,39 @@ public class ApplicationTests {
         assertTrue(customerStream.map(Customer::getFirstName).anyMatch("Halk"::equals));
     }
 
+    @Test
+    public void createNew2Customers() {
+        Predicate<String> classesToWatch = name -> name.contains("vaadin") || name.startsWith("com.test.");
+
+        _click(_get(Button.class, spec -> spec.withCaption("New customer")));
+        _setValue(_get(TextField.class, spec -> spec.withCaption("First name")), "Halk");
+        _click(_get(Button.class, spec -> spec.withCaption("Save")));
+
+        HeapInfo.tryGC();
+        HeapInfo heapInfo1 = new HeapInfo().classStatistics(classesToWatch);
+
+        _click(_get(Button.class, spec -> spec.withCaption("New customer")));
+        _setValue(_get(TextField.class, spec -> spec.withCaption("First name")), "Van Helsing");
+        _click(_get(Button.class, spec -> spec.withCaption("Save")));
+
+        HeapInfo.tryGC();
+        HeapInfo heapInfo2 = new HeapInfo().classStatistics(classesToWatch);
+
+        System.out.println("****** Class usage differences START *****");
+        heapInfo2.delta(heapInfo1).printNicely(null, null, System.out::println);
+        System.out.println("******* Class usage differences END ******");
+
+        Grid<Customer> grid = _get(Grid.class);
+        Stream<Customer> customerStream = grid.getDataProvider().fetch(new Query<>());
+        assertTrue(customerStream.map(Customer::getFirstName).anyMatch("Halk"::equals));
+        customerStream = grid.getDataProvider().fetch(new Query<>());
+        assertTrue(customerStream.map(Customer::getFirstName).anyMatch("Van Helsing"::equals));
+    }
+
     @AfterClass
     public static void heapDump() {
 
         HeapDump.heapDump(ApplicationTests.class);
-        HeapInfo heapInfo = new HeapInfo();
-        heapInfo.classStatistics(s -> s.contains("vaadin"));
-        heapInfo.printNicely(null, Comparator.comparingLong(HeapInfo.ClassHeapInfo::getInstBytes),System.out::println);
     }
 
 }

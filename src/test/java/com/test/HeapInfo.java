@@ -13,6 +13,7 @@ import java.lang.management.ManagementFactory;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -60,7 +61,7 @@ public class HeapInfo extends HashMap<String, HeapInfo.ClassHeapInfo> {
             return "{" +
                     "size:" + instSize +
                     ", count:" + instCount +
-                    ", total:" + instBytes +
+                    ", total bytes:" + instBytes +
                     '}';
         }
 
@@ -97,28 +98,48 @@ public class HeapInfo extends HashMap<String, HeapInfo.ClassHeapInfo> {
         }
 
         public ClassHeapInfo negate() {
-            return new ClassHeapInfo(className, -instSize, -instCount, -instBytes);
+            return new ClassHeapInfo(className, instSize, -instCount, -instBytes);
         }
 
         public ClassHeapInfo sub(ClassHeapInfo anotherInfo) {
             return new ClassHeapInfo(className,
-                    instSize - anotherInfo.instSize,
+                    instSize,
                     instCount - anotherInfo.instCount,
                     instBytes - anotherInfo.instBytes);
         }
 
         public boolean isNotEmpty() {
-            return instBytes != 0 || instCount != 0 || instSize != 0;
+            return instBytes != 0 || instCount != 0;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ClassHeapInfo)) return false;
+            ClassHeapInfo that = (ClassHeapInfo) o;
+            return Objects.equals(className, that.className);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(className);
         }
     }
 
-    public void classStatistics(Predicate<String> filter) {
+    public HeapInfo classStatistics(Predicate<String> filter) {
         try {
             MBeanServer server = ManagementFactory.getPlatformMBeanServer();
             String data = (String) server.invoke(diagCmdBeanName, "gcClassStats", new Object[]{new String[]{"-csv", "columns:ClassName,InstSize,InstCount,InstBytes"}}, new String[]{String[].class.getName()});
             BufferedReader reader = new BufferedReader(new StringReader(data));
             String header = reader.readLine();
+            if (!header.contains("ClassName")) {
+                throw new RuntimeException("Something went wong with JMX beans: " + data);
+            }
             String[] headers = CSV_PATTERN.split(header);
+            Predicate<String> myFilter = s -> !s.startsWith(HeapInfo.class.getName());
+            if (filter != null) {
+                myFilter = myFilter.and(filter);
+            }
             for (String l; (l = reader.readLine()) != null; ) {
                 String[] stats = CSV_PATTERN.split(l);
                 ClassHeapInfo info = new ClassHeapInfo();
@@ -127,7 +148,7 @@ public class HeapInfo extends HashMap<String, HeapInfo.ClassHeapInfo> {
 
                         switch (headers[i]) {
                             case "ClassName":
-                                if (filter == null || filter.test(stats[i])) {
+                                if (myFilter.test(stats[i])) {
                                     info.setClassName(stats[i]);
                                     put(info.getClassName(), info);
                                 }
@@ -149,6 +170,7 @@ public class HeapInfo extends HashMap<String, HeapInfo.ClassHeapInfo> {
         } catch (InstanceNotFoundException | MBeanException | ReflectionException | IOException e) {
             throw new RuntimeException(e);
         }
+        return this;
     }
 
     public void printNicely(Predicate<ClassHeapInfo> filter, Comparator<ClassHeapInfo> sorter, Consumer<String> out) {
@@ -156,9 +178,10 @@ public class HeapInfo extends HashMap<String, HeapInfo.ClassHeapInfo> {
         if (filter != null) {
             stream = stream.filter(filter);
         }
-        if (sorter != null) {
-            stream = stream.sorted(sorter);
+        if (sorter == null) {
+            sorter = Comparator.comparingLong(HeapInfo.ClassHeapInfo::getInstBytes).reversed();
         }
+        stream = stream.sorted(sorter);
         stream.map(info -> info.getClassName() + ":" + info)
                 .forEach(out);
     }
@@ -180,7 +203,7 @@ public class HeapInfo extends HashMap<String, HeapInfo.ClassHeapInfo> {
         }
         copy.values().stream()
                 .filter(ClassHeapInfo::isNotEmpty)
-                .forEach(value ->result.put(value.getClassName(), value));
+                .forEach(value -> result.put(value.getClassName(), value));
         return result;
     }
 
@@ -190,15 +213,24 @@ public class HeapInfo extends HashMap<String, HeapInfo.ClassHeapInfo> {
         System.gc();
         Thread.sleep(200);
         System.gc();
-        heapInfo.classStatistics(s->true);
-        buffer = new byte[100000];
+        heapInfo.classStatistics(s -> true);
+        buffer = new byte[1000000];
         System.gc();
         Thread.sleep(200);
         System.gc();
-        heapInfo2.classStatistics(s->true);
+        heapInfo2.classStatistics(s -> true);
         heapInfo2.delta(heapInfo)
-                .printNicely(info-> info.getInstBytes() > 1,
-                        Comparator.comparingLong(HeapInfo.ClassHeapInfo::getInstBytes).reversed(),
-                        System.out::println);
+                .printNicely(info -> info.getInstBytes() > 1000, null, System.out::println);
+    }
+
+    public static void tryGC() {
+        for (int i = 0; i < 5; i++) {
+            System.gc();
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ignored) {
+
+            }
+        }
     }
 }
