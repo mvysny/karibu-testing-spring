@@ -1,6 +1,6 @@
 package com.test
 
-import com.github.karibu.testing.*
+import com.github.mvysny.kaributesting.v8.*
 import com.vaadin.spring.internal.UIScopeImpl
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid

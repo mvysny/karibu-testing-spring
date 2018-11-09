@@ -1,6 +1,6 @@
 package com.test;
 
-import com.github.karibu.testing.MockVaadin;
+import com.github.mvysny.kaributesting.v8.MockVaadin;
 import com.vaadin.data.provider.Query;
 import com.vaadin.spring.internal.UIScopeImpl;
 import com.vaadin.ui.Button;
@@ -20,7 +20,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.stream.Stream;
 
-import static com.github.karibu.testing.LocatorJ.*;
+import static com.github.mvysny.kaributesting.v8.LocatorJ.*;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
