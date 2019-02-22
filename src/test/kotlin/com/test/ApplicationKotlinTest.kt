@@ -5,6 +5,7 @@ import com.vaadin.spring.internal.UIScopeImpl
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
 import com.vaadin.ui.TextField
+import com.vaadin.ui.UI
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -29,12 +30,18 @@ class ApplicationKotlinTest {
     @Before
     fun setup() {
         UIScopeImpl.setBeanStoreRetrievalStrategy(SingletonBeanStoreRetrievalStrategy())
-        MockVaadin.setup { beanFactory!!.getBean(MainUI::class.java) }
+        MockVaadin.setup({ beanFactory!!.getBean(MainUI::class.java) })
     }
 
     @After
     fun tearDown() {
         MockVaadin.tearDown()
+    }
+
+    @Test
+    fun smokeTest() {
+        expect<Class<*>>(MainUI::class.java) { UI.getCurrent().javaClass }
+        _expectOne<Grid<Customer>>()
     }
 
     @Test
