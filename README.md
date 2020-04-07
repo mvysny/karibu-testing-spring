@@ -3,16 +3,14 @@
 
 # Karibu-Testing Demo project for Spring Boot
 
-An example project which demonstrates the possibility to use the [Karibu-Testing](https://github.com/mvysny/karibu-testing)
-Browserless Testing Framework with Spring Boot. No web server, no Selenium, and no TestBench, pure business logic testing.
+A Vaadin 8 example project which demonstrates the possibility to use
+the [Karibu-Testing](https://github.com/mvysny/karibu-testing)
+Browserless Testing Framework with Spring Boot. No web server,
+no Selenium, and no TestBench, pure business logic testing.
 
-Either Java or Kotlin might be used, or both.
+Either Java or Kotlin might be used, or both. Testing the Vaadin 8 application is as easy as:
 
-
-Now testing of Vaadin application is as easy as:
-
-Java
----
+Java:
 ```java
     @Test
     public void createNewCustomer() {
@@ -25,8 +23,7 @@ Java
     }
 ```
 
-Kotlin
----
+Kotlin:
 ```kotlin
     @Test
     fun createNewCustomer() {
