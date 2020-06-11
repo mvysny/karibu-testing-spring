@@ -25,12 +25,12 @@ import kotlin.test.expect
 class ApplicationKotlinTest {
 
     @Autowired
-    private val beanFactory: BeanFactory? = null
+    private lateinit var beanFactory: BeanFactory
 
     @Before
     fun setup() {
         UIScopeImpl.setBeanStoreRetrievalStrategy(SingletonBeanStoreRetrievalStrategy())
-        MockVaadin.setup({ beanFactory!!.getBean(MainUI::class.java) })
+        MockVaadin.setup({ beanFactory.getBean(MainUI::class.java) })
     }
 
     @After
