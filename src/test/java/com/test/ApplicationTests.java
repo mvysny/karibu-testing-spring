@@ -7,6 +7,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.TextField;
 
+import com.vaadin.ui.UI;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,6 +46,7 @@ public class ApplicationTests {
 
     @Test
     public void createNewCustomer() {
+        UI.getCurrent().getNavigator().navigateTo("");
         _click(_get(Button.class, spec -> spec.withCaption("New customer")));
         _setValue(_get(TextField.class, spec -> spec.withCaption("First name")), "Halk");
         _click(_get(Button.class, spec -> spec.withCaption("Save")));
