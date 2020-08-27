@@ -8,6 +8,8 @@ the [Karibu-Testing](https://github.com/mvysny/karibu-testing)
 Browserless Testing Framework with Spring Boot. No web server,
 no Selenium, and no TestBench, pure business logic testing.
 
+> For Vaadin 14 example project please visit [t-shirt-shop-example](https://github.com/mvysny/t-shirt-shop-example).
+
 Either Java or Kotlin might be used, or both. Testing the Vaadin 8 application is as easy as:
 
 Java:
