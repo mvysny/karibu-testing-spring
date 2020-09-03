@@ -6,19 +6,19 @@ import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
 import com.vaadin.ui.TextField
 import com.vaadin.ui.UI
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.BeanFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.context.web.WebAppConfiguration
 import kotlin.test.expect
 
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @SpringBootTest
 @WebAppConfiguration
 @DirtiesContext
@@ -27,13 +27,13 @@ class ApplicationKotlinTest {
     @Autowired
     private lateinit var beanFactory: BeanFactory
 
-    @Before
+    @BeforeEach
     fun setup() {
         UIScopeImpl.setBeanStoreRetrievalStrategy(SingletonBeanStoreRetrievalStrategy())
         MockVaadin.setup({ beanFactory.getBean(MainUI::class.java) })
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         MockVaadin.tearDown()
     }
